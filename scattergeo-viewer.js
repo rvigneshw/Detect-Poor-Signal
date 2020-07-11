@@ -54,7 +54,7 @@ function initialize() {
     ];
 
     NW_PROVIDER_NAMES = ["Jio", "Vodafone", "Airtel", "BSNL"];
-    SCALE = 100;
+    SCALE = 10;
     DEBUG = false;
     color = [];
     signalSize = [];
@@ -135,21 +135,20 @@ function processData() {
 }
 
 function plot() {
-
     var data = [{
-        type: 'scattermapbox',
+        type: 'scattergeo',
         mode: 'markers',
         text: hoverText,
         lon: signalLat,
         lat: signalLon,
         marker: {
-            color: signalSize,
+            color: "#000000",
             colorscale: scl,
             cmin: 0,
             cmax: 1.0,
-            reversescale: false,
+            reversescale: true,
             opacity: 0.90,
-            size: 5,
+            size: signalSize,
             colorbar: {
                 thickness: 10,
                 titleside: 'right',
@@ -161,8 +160,38 @@ function plot() {
                 dtick: 0.1
             }
         },
-        name: 'Signal Strength Chart'
+        name: 'europe data'
     }];
+
+    ///////////////////
+
+    // var data = [{
+    //     type: 'scattermapbox',
+    //     mode: 'markers',
+    //     text: hoverText,
+    //     lon: signalLat,
+    //     lat: signalLon,
+    //     marker: {
+    //         color: signalSize,
+    //         colorscale: scl,
+    //         cmin: 0,
+    //         cmax: 1.0,
+    //         reversescale: false,
+    //         opacity: 0.90,
+    //         size: 5,
+    //         colorbar: {
+    //             thickness: 10,
+    //             titleside: 'right',
+    //             outlinecolor: 'rgba(0,0,0,255)',
+    //             ticks: 'outside',
+    //             ticklen: 3,
+    //             shoticksuffix: 'last',
+    //             ticksuffix: ' Signal Strength',
+    //             dtick: 0.1
+    //         }
+    //     },
+    //     name: 'Signal Strength Chart'
+    // }];
 
     var layout = {
         width: 1300,
