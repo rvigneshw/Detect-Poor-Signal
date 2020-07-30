@@ -19,44 +19,40 @@ $(document).ready(function () {
         url: "mooc-server/geo.xl.csv",
         dataType: "text",
         success: function (data) {
-            if (DEBUG) {
-                testData();
-            } else {
-                populateData(data);
-            }
+            populateData(data);
         }
     });
 });
 
 function initialize() {
-    scl = [
-        [0, '#57bb8a'],
-        [0.5, '#63b682'],
-        [0.10, '#73b87e'],
-        [0.15, '#84bb7b'],
-        [0.20, '#94bd77'],
-        [0.25, '#a4c073'],
-        [0.30, '#b0be6e'],
-        [0.35, '#c4c56d'],
-        [0.40, '#d4c86a'],
-        [0.45, '#e2c965'],
-        [0.50, '#f5ce62'],
-        [0.55, '#f3c563'],
-        [0.60, '#e9b861'],
-        [0.65, '#e6ad61'],
-        [0.70, '#ecac67'],
-        [0.75, '#e9a268'],
-        [0.80, '#e79a69'],
-        [0.85, '#e5926b'],
-        [0.90, '#e2886c'],
-        [0.95, '#e0816d'],
-        [1, '#dd776e'],
-    ];
+    // scl = [
+    //     [0, '#57bb8a'],
+    //     [0.5, '#63b682'],
+    //     [0.10, '#73b87e'],
+    //     [0.15, '#84bb7b'],
+    //     [0.20, '#94bd77'],
+    //     [0.25, '#a4c073'],
+    //     [0.30, '#b0be6e'],
+    //     [0.35, '#c4c56d'],
+    //     [0.40, '#d4c86a'],
+    //     [0.45, '#e2c965'],
+    //     [0.50, '#f5ce62'],
+    //     [0.55, '#f3c563'],
+    //     [0.60, '#e9b861'],
+    //     [0.65, '#e6ad61'],
+    //     [0.70, '#ecac67'],
+    //     [0.75, '#e9a268'],
+    //     [0.80, '#e79a69'],
+    //     [0.85, '#e5926b'],
+    //     [0.90, '#e2886c'],
+    //     [0.95, '#e0816d'],
+    //     [1, '#dd776e'],
+    // ];
 
     NW_PROVIDER_NAMES = ["Jio", "Vodafone", "Airtel", "BSNL"];
-    SCALE = 10;
+    SCALE = 100;
     DEBUG = false;
-    color = scl;
+    color = [];
     signalSize = [];
     hoverText = [];
     markerColor = [];
@@ -64,20 +60,26 @@ function initialize() {
     signalStrength = [];
     signalLat = [];
     signalLon = [];
-    MAX_VALUE = 20000;
+    MAX_VALUE = 200000;
 }
 function populateData(allText) {
     var allTextLines = allText.split(/\r\n|\n/);
     var headers = allTextLines[0].split(',');
     var truncatedData = allTextLines.slice(0, MAX_VALUE)
-    console.log(truncatedData)
-    for (var i = 0; i < MAX_VALUE; i++) {
+    for (var i = 1; i < truncatedData.length; i++) {
         var csvData = truncatedData[i].split(',');
         if (csvData.length == headers.length) {
             signalLat.push(csvData[0]);
             signalLon.push(csvData[1]);
             signalStrength.push(csvData[2]);
             NWProvider.push(csvData[3]);
+            if (csvData[2] > 70) {
+                markerColor.push("#00FF00");
+            } else if (csvData[2] > 40) {
+                markerColor.push("#FFFF00");
+            } else {
+                markerColor.push("#FF0000");
+            }
         }
     }
     processData();
@@ -85,45 +87,6 @@ function populateData(allText) {
 
 
 
-function testData() {
-
-    signalLat.push(17.722042)
-    signalLon.push(32.447383)
-    signalStrength.push(4)
-    NWProvider.push(0)
-
-    signalLat.push(17.778285)
-    signalLon.push(44.107614)
-    signalStrength.push(22)
-    NWProvider.push(2)
-
-    signalLat.push(17.848523)
-    signalLon.push(37.779535)
-    signalStrength.push(43)
-    NWProvider.push(3)
-
-    signalLat.push(17.852888)
-    signalLon.push(52.968512)
-    signalStrength.push(27)
-    NWProvider.push(3)
-
-    signalLat.push(17.865568)
-    signalLon.push(33.512103)
-    signalStrength.push(45)
-    NWProvider.push(0)
-
-    signalLat.push(17.869672)
-    signalLon.push(63.898682)
-    signalStrength.push(65)
-    NWProvider.push(2)
-
-    signalLat.push(17.899919)
-    signalLon.push(76.453163)
-    signalStrength.push(35)
-    NWProvider.push(3)
-
-    processData();
-}
 
 function processData() {
     for (var i = 0; i < signalStrength.length; i++) {
@@ -136,35 +99,23 @@ function processData() {
 }
 
 function plot() {
+
     var data = [{
-        type: 'scattergeo',
+        type: 'scattermapbox',
         mode: 'markers',
         text: hoverText,
         lon: signalLat,
         lat: signalLon,
         marker: {
-            color: "#000000",
-            colorscale: scl,
+            color: markerColor,
             cmin: 0,
             cmax: 1.0,
-            reversescale: true,
+            reversescale: false,
             opacity: 0.90,
-            size: signalSize,
-            colorbar: {
-                thickness: 10,
-                titleside: 'right',
-                outlinecolor: 'rgba(0,0,0,255)',
-                ticks: 'outside',
-                ticklen: 3,
-                shoticksuffix: 'last',
-                ticksuffix: ' Signal Strength',
-                dtick: 0.1
-            }
+            size: 5
         },
-        name: 'europe data'
+        name: 'Signal Strength Chart'
     }];
-
-
 
     var layout = {
         width: 1300,
@@ -226,4 +177,43 @@ function handler() {
     //     yInside.push(y)
     //     }
     // }});
+}
+function testData() {
+
+    signalLat.push(17.722042)
+    signalLon.push(32.447383)
+    signalStrength.push(4)
+    NWProvider.push(0)
+
+    signalLat.push(17.778285)
+    signalLon.push(44.107614)
+    signalStrength.push(22)
+    NWProvider.push(2)
+
+    signalLat.push(17.848523)
+    signalLon.push(37.779535)
+    signalStrength.push(43)
+    NWProvider.push(3)
+
+    signalLat.push(17.852888)
+    signalLon.push(52.968512)
+    signalStrength.push(27)
+    NWProvider.push(3)
+
+    signalLat.push(17.865568)
+    signalLon.push(33.512103)
+    signalStrength.push(45)
+    NWProvider.push(0)
+
+    signalLat.push(17.869672)
+    signalLon.push(63.898682)
+    signalStrength.push(65)
+    NWProvider.push(2)
+
+    signalLat.push(17.899919)
+    signalLon.push(76.453163)
+    signalStrength.push(35)
+    NWProvider.push(3)
+
+    processData();
 }

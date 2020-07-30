@@ -16,14 +16,10 @@ $(document).ready(function () {
     initialize();
     $.ajax({
         type: "GET",
-        url: "mooc-server/geo.md.csv",
+        url: "mooc-server/geo.xl.csv",
         dataType: "text",
         success: function (data) {
-            if (DEBUG) {
-                testData();
-            } else {
-                populateData(data);
-            }
+            populateData(data);
         }
     });
 });
@@ -54,7 +50,7 @@ function initialize() {
     ];
 
     NW_PROVIDER_NAMES = ["Jio", "Vodafone", "Airtel", "BSNL"];
-    SCALE = 100;
+    SCALE = 10;
     DEBUG = false;
     color = [];
     signalSize = [];
@@ -77,6 +73,13 @@ function populateData(allText) {
             signalLon.push(csvData[1]);
             signalStrength.push(csvData[2]);
             NWProvider.push(csvData[3]);
+            if (csvData[2] > 70) {
+                markerColor.push("#00FF00");
+            } else if (csvData[2] > 40) {
+                markerColor.push("#FFFF00");
+            } else {
+                markerColor.push("#FF0000");
+            }
         }
     }
     processData();
@@ -84,45 +87,6 @@ function populateData(allText) {
 
 
 
-function testData() {
-
-    signalLat.push(17.722042)
-    signalLon.push(32.447383)
-    signalStrength.push(4)
-    NWProvider.push(0)
-
-    signalLat.push(17.778285)
-    signalLon.push(44.107614)
-    signalStrength.push(22)
-    NWProvider.push(2)
-
-    signalLat.push(17.848523)
-    signalLon.push(37.779535)
-    signalStrength.push(43)
-    NWProvider.push(3)
-
-    signalLat.push(17.852888)
-    signalLon.push(52.968512)
-    signalStrength.push(27)
-    NWProvider.push(3)
-
-    signalLat.push(17.865568)
-    signalLon.push(33.512103)
-    signalStrength.push(45)
-    NWProvider.push(0)
-
-    signalLat.push(17.869672)
-    signalLon.push(63.898682)
-    signalStrength.push(65)
-    NWProvider.push(2)
-
-    signalLat.push(17.899919)
-    signalLon.push(76.453163)
-    signalStrength.push(35)
-    NWProvider.push(3)
-
-    processData();
-}
 
 function processData() {
     for (var i = 0; i < signalStrength.length; i++) {
@@ -143,21 +107,21 @@ function plot() {
         lon: signalLat,
         lat: signalLon,
         marker: {
-            color: signalSize,
-            colorscale: scl,
+            color: "#00FF00",
+            // colorscale: scl, Determines Variable color scale
             cmin: 0,
-            cmax: 1.0,
-            reversescale: false,
-            opacity: 0.90,
-            size: 5,
+            cmax: 1.4,
+            reversescale: true,
+            opacity: 0.5,
+            size: signalSize,//Determines variable size
             colorbar: {
                 thickness: 10,
                 titleside: 'right',
-                outlinecolor: 'rgba(0,0,0,255)',
+                outlinecolor: 'rgba(68,68,68,0)',
                 ticks: 'outside',
                 ticklen: 3,
                 shoticksuffix: 'last',
-                ticksuffix: ' Signal Strength',
+                ticksuffix: 'inches',
                 dtick: 0.1
             }
         },
@@ -224,4 +188,43 @@ function handler() {
     //     yInside.push(y)
     //     }
     // }});
+}
+function testData() {
+
+    signalLat.push(17.722042)
+    signalLon.push(32.447383)
+    signalStrength.push(4)
+    NWProvider.push(0)
+
+    signalLat.push(17.778285)
+    signalLon.push(44.107614)
+    signalStrength.push(22)
+    NWProvider.push(2)
+
+    signalLat.push(17.848523)
+    signalLon.push(37.779535)
+    signalStrength.push(43)
+    NWProvider.push(3)
+
+    signalLat.push(17.852888)
+    signalLon.push(52.968512)
+    signalStrength.push(27)
+    NWProvider.push(3)
+
+    signalLat.push(17.865568)
+    signalLon.push(33.512103)
+    signalStrength.push(45)
+    NWProvider.push(0)
+
+    signalLat.push(17.869672)
+    signalLon.push(63.898682)
+    signalStrength.push(65)
+    NWProvider.push(2)
+
+    signalLat.push(17.899919)
+    signalLon.push(76.453163)
+    signalStrength.push(35)
+    NWProvider.push(3)
+
+    processData();
 }
